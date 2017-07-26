@@ -1,0 +1,134 @@
+﻿<!--
+    Wei Kong - Info 344
+
+    Simple UI for testing code.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Wei's Awesome Query Suggester</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Function to query the searcher asyncronously on keyup
+            $("#querybox").keyup(function () {
+                $("#searchsuggestiondiv").html("");
+                var queryVal = $("#querybox").val();
+                if (queryVal.length > 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "Search.asmx/FindPrefix",
+                        data: '{query : "' + queryVal + '" }',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            //console.log(data);
+                            var results = eval(data.d);
+                            //console.log(results);
+                            $.each(results, function (key, value) {
+                                //console.log(value);
+                                $("#searchsuggestiondiv").append("<div id=\"" + key + "\" class=\"suggestionlink\">" + value + "</div>")
+
+                                $("#" + key).click(function () {
+                                    var test = $("#" + key).text();
+                                    console.log(test);
+                                    $("#querybox").val(test);
+                                    $("#searchsuggestiondiv").html("");
+                                    executeSearch(value);
+                                });
+                            });
+                        },
+                        error: function (msg) {
+                            console.log(msg);
+                        }
+                    });
+                }
+            });
+
+            $("#searchbutton").click(function () {
+                var queryVal = $("#querybox").val();
+                executeSearch(queryVal);
+            });
+
+            function executeSearch(searchQuery) {
+                $("#resultsmainpanel").html("");
+                $("#resultssidepanel").html("");
+                searchQuery = searchQuery.replace(" ", "+")
+                $.ajax({
+                    type: "GET",
+                    url: "http://ec2-54-187-103-37.us-west-2.compute.amazonaws.com/apidbquerier.php?query="+searchQuery,
+                    dataType: "jsonp",
+                    success: function (data) {
+                        console.log(data);
+                        var playerName = data[0].PlayerName;
+                        $("#resultssidepanel").append("<h3>" + playerName + "</h3>");
+                        $("#resultssidepanel").append("<div>Profession: Basketball Player</div>");
+                        $("#resultssidepanel").append("<div>FGP : " + data[0].FGP + "</div>");
+                        $("#resultssidepanel").append("<div>FTP : " + data[0].FTP + "</div>");
+                        $("#resultssidepanel").append("<div>GP : " + data[0].GP + "</div>");
+                        $("#resultssidepanel").append("<div>PPG : " + data[0].PPG + "</div>");
+                        $("#resultssidepanel").append("<div>TPP : " + data[0].TPP + "</div>");
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "Search.asmx/GetPageTitleAndBody",
+                    data: '{query : "' + searchQuery + '" }',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        var results = eval(data.d);
+                        $.each(results, function (key, value) {
+                            $("#resultsmainpanel").append("<div id=\"" + key + "\" class=\"resultnodediv\">" +
+                                "<a href=\"" + value.Url + "\">" + value.Title + "</a>" +
+                                "<div class=\"resultdatediv\">" + value.Date + "</a>" +
+                                "</div>")
+                        });
+
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="main">
+        <h1>Query</h1>
+        <div id="searchwrapper">
+            <div id="querydiv">
+                <input id="querybox" type="text" name="query" placeholder="Search" />
+                <button id="searchbutton" name="submit">Go</button>
+            </div>
+            <div id="searchsuggestiondiv">
+
+            </div>
+        </div>
+    </div>
+    <div id="resultswrapper">
+        <div id="resultsmainpanel"></div>
+        <div id="resultssidepanelwrapper">
+            <div id="resultssidepanel"></div>
+            <div id="adplacement">
+                <script type='text/javascript' src='http://ads.qadserve.com/t?id=989faa8a-59c8-4806-b200-a37617897d27&size=120x600'></script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

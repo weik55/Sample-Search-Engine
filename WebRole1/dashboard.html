@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Wei's Query Admin Page</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Function to query the searcher asyncronously on keyup
+            $("#hititbutton").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "admin.asmx/StartCrawling",
+                    success: function (data) {
+                        console.log(data);
+                        $("#systemmessages").append("<p>Working...</p>");
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                    }
+                });
+            });
+
+            $("#stopbutton").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "admin.asmx/ClearIndex",
+                    success: function (data) {
+                        console.log(data);
+                        $("#systemmessages").append("<p>Stopped</p>");
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                    }
+                });
+            });
+
+            //$("#findUrl").click(function () {
+            //    $("#titleandcontentresults").html("");
+            //    var queryVal = $("#urlquerytext").val();
+            //    $.ajax({
+            //        type: "POST",
+            //        url: "admin.asmx/GetPageTitleAndBody",
+            //        data: '{url : "' + queryVal + '" }',
+            //        contentType: "application/json; charset=utf-8",
+            //        dataType: "json",
+            //        success: function (data) {
+            //            var results = $.parseJSON(data.d);
+            //            $("#titleandcontentresults").html("<p>" + results.Result.Title + "</p><p>" + results.Result.Body + "</p>");
+            //        },
+            //        error: function (msg) {
+            //            console.log(msg);
+            //        }
+            //    });
+            //});
+
+            var tid = setInterval(getSysInfo, 2000);
+            function getSysInfo() {
+                $.ajax({
+                    type: "POST",
+                    url: "admin.asmx/GetSysInfo",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        var results = $.parseJSON(data.d);
+                        //console.log(results);
+
+                        $("#stateofworkersresults").html("<p>" + results.Result.CrawlerState + "</p>");
+                        $("#machinecountersresults").html("<div id=\"cpuusage\">CPU Usage: " + results.Result.CpuUsage + "%</div><div id=\"memusage\">Meme Usage: " + results.Result.MemProcess + "mb</div>");
+                        $('#numurlscrawledresults').html("<p>" + results.Result.NumUrls + "</p>");
+                        $('#queuesizeresults').html('<p>' + results.Result.QueueSize + '</p>')
+                        $('#indexsizeresults').html('<p>' + results.Result.IndexSize + '</p>')
+                        $('#numtrieurlsresults').html('<p>' + results.Result.LastTrieLine + '</p>')
+                        $('#lasttriepagetitleresults').html('<p>' + results.Result.TrieSize + '</p>')
+
+                        var last10String = results.Result.Last10Urls;
+                        var last10arr = last10String.split(',');
+
+                        $('#lasttenurlsresults').html(' ');
+                        $.each(last10arr, function (index, value) {
+                            $('#lasttenurlsresults').append('<p><a href="' + value + '">' + value + '</a></p>');
+                        });
+
+
+
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="header">
+        <h1>Query Admin Page</h1>
+        <div id="hitit">
+            <button id="hititbutton">Hit It!</button>
+        </div>
+    </div>
+    <div id="results">
+        <div id="resultscol1">
+            <div class="resultsdiv" id="stateofworkers">
+                <div class="resultsdivheader">State of Workers</div>
+                <div id="stateofworkersresults"></div>
+            </div>
+            <div class="resultsdiv" id="machinecounters">
+                <div class="resultsdivheader">Machine Counters</div>
+                <div id="machinecountersresults"></div>
+            </div>
+            <div class="resultsdiv" id="numurlscrawled">
+                <div class="resultsdivheader">Number of URLs Crawled</div>
+                <div id="numurlscrawledresults"></div>
+            </div>
+            <div class="resultsdiv" id="queuesize">
+                <div class="resultsdivheader">Queue Size</div>
+                <div id="queuesizeresults"></div>
+            </div>
+
+        </div>
+        <div id="resultscol2">
+            <div class="resultsdiv" id="lasttenurls">
+                <div class="resultsdivheader">Last 10 URLS</div>
+                <div id="lasttenurlsresults"></div>
+            </div>
+            <div class="resultsdiv" id="indexsize">
+                <div class="resultsdivheader">Index Size</div>
+                <div id="indexsizeresults"></div>
+            </div>
+        </div>
+        <div id="resultscol3">
+            <div class="resultsdiv" id="numtrieurls">
+                <div class="resultsdivheader">Number Urls in Trie</div>
+                <div id="numtrieurlsresults"></div>
+            </div>
+            <div class="resultsdiv" id="lasttriepagetitle">
+                <div class="resultsdivheader">Last Title in Trie</div>
+                <div id="lasttriepagetitleresults"></div>
+            </div>
+            <!--
+            <div>
+                <input id="urlquerytext" type="text" placeholder="Parsed Url" />
+                <button id="findUrl">Go!</button>
+            </div>
+            <div class="resultsdiv" id="titleandcontent">
+                <div class="resultsdivheader">Your Page</div>
+                <div id="titleandcontentresults"></div>
+            </div>
+            -->
+        </div>
+        <div id="crawlererrors">
+            <div class="resultsdivheader">System Messages</div>
+            <div id="systemmessages"></div>
+        </div>
+        <button id="stopbutton">Stop!</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+﻿/*
+    Wei Kong - Info 344
+    
+    Simple stylesheet for UI
+
+    For my own reference:
+
+    colors:
+    #393939
+    #FF5A09
+    #F3843E
+    #FF9900
+    #6E6E6E
+    #F0F0F0
+    */
+
+body {
+    background-color: #393939;
+    color: #FFFFFF;
+    font-family: "Open Sans", Calibri;
+}
+
+h1 {
+    margin-top: 200px;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
+
+input:focus {
+    outline: none;
+}
+
+#main {
+    width: 800px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+
+#searchwrapper {
+    width: 600px;
+    margin: 0 auto;
+}
+
+#querydiv {
+    background-color: #FFFFFF;
+    height: 35px;
+    border-radius: 3px;
+}
+
+#querybox {
+    margin: 0px;
+    height: 35px;
+    width: 545px;
+    margin-left: 10px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border: none;
+}
+
+#searchbutton {
+    background-color: #FF5A09;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
+    margin: 0px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: inherit;
+    border: none;
+    color: #FFFFFF;
+}
+
+#searchbutton:hover {
+    background-color: #FF9900;
+}
+
+#searchsuggestiondiv  {
+    position: absolute;
+    border-radius: 3px;
+    text-align: left;
+    background-color: white;
+    color: #000000;
+}
+
+#searchsuggestiondiv .suggestionlink{
+    padding: 5px;
+    display:block;
+    text-decoration: none;
+    color: #000000;
+}
+
+#searchsuggestiondiv .suggestionlink:hover{
+    background-color: #FF9900;
+    color: #FFFFFF;
+}
+
+#resultssidepanel{
+    margin-bottom: 20px;
+}
+
+#resultsmainpanel {
+    float: left;
+    max-width: 500px;
+    text-align: left;
+    margin-top: 10px;
+    padding: 20px;
+}
+
+#resultsmainpanel a{
+    font-weight: bold;
+    color: #FF5A09;
+    text-decoration: none;
+}
+
+#resultsmainpanel a:hover{
+    color: #FF9900;
+    text-decoration: none;
+}
+
+
+#resultsmainpanel .resultnodediv {
+    margin-bottom: 20px;
+}
+
+#resultssidepanelwrapper {
+    float: right;
+    max-width: 300px;
+    padding-right: 100px;
+}
+
+#adplacement {
+
+}
